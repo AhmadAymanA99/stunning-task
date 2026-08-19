@@ -1,6 +1,6 @@
 # Stunning Builder — AI-Powered Build Planner
 
-A full-stack landing page that takes a user's product idea and selected integrations, then generates a detailed technical specification using GPT-4o.
+A full-stack landing page that takes a user's product idea and selected integrations, then generates a detailed technical specification using Llama 3.1 70B (via Groq).
 
 **Repository:** https://github.com/AhmadAymanA99/stunning-task
 
@@ -8,7 +8,7 @@ A full-stack landing page that takes a user's product idea and selected integrat
 
 - **Prompt Input** — Describe what you want to build
 - **Integration Selector** — Choose from Stripe, Shopify, Gmail, Slack, Google Sheets
-- **AI Generation** — Streaming response from GPT-4o with integration-specific context
+- **AI Generation** — Streaming response from Llama 3.1 70B with integration-specific context
 - **Production-Ready Output** — Architecture, tech stack, file structure, code examples, security, deployment
 
 ## Tech Stack
@@ -16,7 +16,7 @@ A full-stack landing page that takes a user's product idea and selected integrat
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4 + shadcn/ui
-- **AI**: OpenAI GPT-4o (streaming)
+- **AI**: Groq (Llama 3.1 70B Versatile) — Free tier available
 - **Validation**: Zod
 
 ## Getting Started
@@ -25,7 +25,7 @@ A full-stack landing page that takes a user's product idea and selected integrat
 
 - Node.js 18+
 - npm or pnpm
-- OpenAI API key
+- Groq API key (free)
 
 ### Installation
 
@@ -39,7 +39,7 @@ npm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Edit .env.local and add your OPENAI_API_KEY
+# Edit .env.local and add your GROQ_API_KEY
 ```
 
 ### Environment Variables
@@ -47,10 +47,10 @@ cp .env.example .env.local
 Create a `.env.local` file in the root directory:
 
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
-Get your API key from [OpenAI Platform](https://platform.openai.com/api-keys).
+Get your free API key from [Groq Console](https://console.groq.com/keys).
 
 ### Development
 
@@ -95,7 +95,7 @@ src/
 1. User enters a prompt and selects integrations
 2. On submit, the frontend calls `/api/generate` with prompt + integration IDs
 3. Backend validates input, builds system prompt with integration contexts
-4. Requests GPT-4o with streaming enabled
+4. Requests Llama 3.1 70B via Groq with streaming enabled
 5. Frontend displays streaming response in real-time
 6. User can copy the generated specification
 
@@ -124,7 +124,7 @@ Deploy to Vercel:
 
 1. Push to GitHub
 2. Import project in Vercel
-3. Add `OPENAI_API_KEY` environment variable
+3. Add `GROQ_API_KEY` environment variable
 4. Deploy
 
 ## License

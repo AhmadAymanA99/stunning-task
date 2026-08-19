@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 import { buildSystemPrompt } from '@/lib/prompt-builder';
 import { getIntegrationsByIds } from '@/lib/integrations';
 import { INTEGRATIONS } from '@/lib/integrations';
 
-function getOpenAIClient() {
-  const apiKey = process.env.OPENAI_API_KEY;
+function getGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENAI_API_KEY not configured');
+    throw new Error('GROQ_API_KEY not configured');
   }
-  return new OpenAI({ apiKey });
+  return new Groq({ apiKey });
 }
 
 const generateSchema = z.object({
@@ -65,9 +65,9 @@ Provide:
 7. **Deployment & Operations** - CI/CD, monitoring, scaling
 8. **Next Steps** - Immediate action items`;
 
-    let openai: OpenAI;
+    let groq: Groq;
     try {
-      openai = getOpenAIClient();
+      groq = getGroqClient();
     } catch {
       return NextResponse.json(
         { error: 'AI service not configured. Please contact administrator.' },
@@ -75,8 +75,8 @@ Provide:
       );
     }
 
-    const stream = await openai.chat.completions.create({
-      model: 'gpt-4o',
+    const stream = await groq.chat.completions.create({
+      model: 'llama-3.1-70b-versatile',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
@@ -110,7 +110,7 @@ Provide:
   } catch (error) {
     console.error('Generation error:', error);
 
-    if (error instanceof OpenAI.APIError) {
+    if (error instanceof Groq.APIError) {
       return NextResponse.json(
         { error: `AI service error: ${error.message}` },
         { status: error.status || 500 }
