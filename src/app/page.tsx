@@ -104,12 +104,12 @@ export default function Home() {
                   </Tabs>
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 overflow-y-auto p-0 pt-4 space-y-4">
+              <CardContent className="flex-1 overflow-y-auto p-4 space-y-5">
                 <PromptInput
                   onSubmit={handleGenerate}
                   disabled={isLoading}
                 />
-                <Separator />
+                <Separator className="my-2" />
                 <IntegrationSelector
                   integrations={INTEGRATIONS}
                   onChange={setSelectedIntegrations}
@@ -133,7 +133,7 @@ export default function Home() {
                   )}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 overflow-y-auto p-0 pt-4">
+              <CardContent className="flex-1 overflow-y-auto p-4 pt-2">
                 <ResponseDisplay
                   content={response}
                   isLoading={isLoading}
