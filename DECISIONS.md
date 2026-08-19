@@ -10,7 +10,7 @@
 - Zod schema validation on both client and server
 - Character limits (10-2000 chars) with live counter
 - Graceful error states with retry button
-- OpenAI API error mapping (rate limits, auth, model errors)
+- Groq API error mapping (rate limits, auth, model errors)
 
 ### 3. Integration Context Injection
 - Each integration has detailed `systemPromptContext` with:
@@ -84,7 +84,7 @@
 ### 8. Advanced AI Features
 - No conversation memory (stateless)
 - No prompt templates or saved presets
-- No model selection (fixed to GPT-4o)
+- No model selection (fixed to Llama 3.1 70B via Groq)
 - No function calling / tool use
 
 ### 9. Internationalization
@@ -100,21 +100,20 @@
 
 ## What is the biggest production risk?
 
-### OpenAI API Dependency & Failure Modes
+### 4. AI Provider Lock-in & Failure Modes
 
-**Risk**: The entire core feature depends on a single external API (OpenAI GPT-4o).
+**Risk**: The entire core feature depends on a single external API (Groq / Llama 3.1 70B).
 
 **Failure Scenarios**:
-1. **API Downtime** — OpenAI outage = feature completely broken
+1. **API Downtime** — Groq outage = feature completely broken
 2. **Rate Limits** — Sudden traffic spike hits tier limits → 429 errors
-3. **Cost Spikes** — Malicious/accidental high usage → unexpected bills
-4. **Model Deprecation** — GPT-4o retired, migration required
-5. **Latency Variance** — P99 latency >30s causes timeouts
-6. **Content Policy Changes** — Valid prompts suddenly rejected
+3. **Model Deprecation** — Llama 3.1 70B retired, migration required
+4. **Latency Variance** — P99 latency >30s causes timeouts
+5. **Content Policy Changes** — Valid prompts suddenly rejected
 
 **Mitigations Needed for Production**:
 - **Circuit Breaker** — Fail fast, show cached/fallback responses
-- **Multi-Provider Fallback** — OpenRouter or Anthropic as backup
+- **Multi-Provider Fallback** — OpenRouter or OpenAI as backup
 - **Request Queuing** — BullMQ/Upstash Queue for traffic spikes
 - **Usage Monitoring** — Daily spend alerts, per-user quotas
 - **Response Caching** — Cache common prompts (Redis)

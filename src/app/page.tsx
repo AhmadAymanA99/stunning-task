@@ -85,7 +85,7 @@ export default function Home() {
             </h1>
             <p className="text-lg lg:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
               Input your concept, select integrations, and receive a detailed technical specification
-              with architecture, code examples, and implementation steps — powered by GPT-4o.
+              with architecture, code examples, and implementation steps — powered by Llama 3.1 70B.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-full">
@@ -140,7 +140,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Built for Stunning Candidate Task — Next.js 15 + TypeScript + OpenAI GPT-4o</p>
+          <p>Built for Stunning Candidate Task — Next.js 15 + TypeScript + Groq (Llama 3.1 70B)</p>
         </div>
       </footer>
     </div>
