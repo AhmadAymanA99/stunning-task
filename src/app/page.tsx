@@ -8,20 +8,17 @@ import { INTEGRATIONS } from '@/lib/integrations';
 import { Sparkles, Zap, Shield, Code } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Home() {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedIntegrations, setSelectedIntegrations] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<'build' | 'result'>('build');
 
   const handleGenerate = useCallback(async (prompt: string) => {
     setIsLoading(true);
     setError(null);
     setResponse('');
-    setActiveTab('result');
 
     try {
       const res = await fetch('/api/generate', {
@@ -94,15 +91,7 @@ export default function Home() {
           <div className="flex flex-col h-full min-h-0">
             <Card className="flex-1 flex flex-col h-full">
               <CardHeader className="pb-3 flex-shrink-0">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Build Your Spec</CardTitle>
-                  <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'build' | 'result')} className="ml-auto">
-                    <TabsList className="grid w-auto grid-cols-2 bg-muted p-1">
-                      <TabsTrigger value="build" className="text-xs py-1.5">Input</TabsTrigger>
-                      <TabsTrigger value="result" className="text-xs py-1.5">Result</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
+                <CardTitle className="text-base">Build Your Spec</CardTitle>
               </CardHeader>
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-5">
                 <PromptInput

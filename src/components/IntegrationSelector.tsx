@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import { Integration } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ export function IntegrationSelector({
   disabled,
 }: IntegrationSelectorProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const popoverRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     onChange(selectedIds);
@@ -46,11 +46,11 @@ export function IntegrationSelector({
   };
 
   return (
-    <div className="w-full" ref={popoverRef}>
+    <div className="w-full">
       <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
         Integrations (optional)
       </label>
-      <Popover open={false}>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -79,10 +79,9 @@ export function IntegrationSelector({
           </div>
           <div className="max-h-56 overflow-y-auto">
             {integrations.map((integration) => (
-              <div
+              <label
                 key={integration.id}
                 className="flex items-center gap-2 px-1.5 py-1.5 hover:bg-accent rounded cursor-pointer transition-colors"
-                onClick={() => toggleIntegration(integration.id)}
               >
                 <Checkbox
                   checked={selectedIds.includes(integration.id)}
@@ -96,7 +95,7 @@ export function IntegrationSelector({
                     {integration.description}
                   </p>
                 </div>
-              </div>
+              </label>
             ))}
           </div>
         </PopoverContent>

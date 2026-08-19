@@ -76,7 +76,7 @@ Provide:
     }
 
     const stream = await groq.chat.completions.create({
-      model: 'llama-3.1-70b-versatile',
+      model: 'groq/compound',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
