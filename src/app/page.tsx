@@ -6,19 +6,22 @@ import { IntegrationSelector } from '@/components/IntegrationSelector';
 import { ResponseDisplay } from '@/components/ResponseDisplay';
 import { INTEGRATIONS } from '@/lib/integrations';
 import { Sparkles, Zap, Shield, Code } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Home() {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedIntegrations, setSelectedIntegrations] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'build' | 'result'>('build');
 
   const handleGenerate = useCallback(async (prompt: string) => {
     setIsLoading(true);
     setError(null);
     setResponse('');
+    setActiveTab('result');
 
     try {
       const res = await fetch('/api/generate', {
@@ -27,91 +30,81 @@ export default function Home() {
         body: JSON.stringify({ prompt, selectedIntegrations }),
       });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Generation failed');
-    }
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Generation failed');
+      }
 
-    const reader = res.body?.getReader();
-    const decoder = new TextDecoder();
-    let fullContent = '';
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullContent = '';
 
-    if (reader) {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.content) {
-                fullContent += parsed.content;
-                setResponse(fullContent);
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') continue;
+              try {
+                const parsed = JSON.parse(data);
+                if (parsed.content) {
+                  fullContent += parsed.content;
+                  setResponse(fullContent);
+                }
+              } catch {
               }
-            } catch {
-              // ignore parse errors
             }
           }
         }
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    setError(err instanceof Error ? err.message : 'Something went wrong');
-  } finally {
-    setIsLoading(false);
-  }
   }, [selectedIntegrations]);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-primary/10 via-transparent to-transparent" />
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Sparkles className="h-4 w-4" />
-              <span>AI-Powered Build Planner</span>
-            </div>
-            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
-              Describe your idea, get a{' '}
-              <span className="text-primary">production-ready plan</span>
-            </h1>
-            <p className="text-lg lg:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-              Input your concept, select integrations, and receive a detailed technical specification
-              with architecture, code examples, and implementation steps — powered by Llama 3.1 70B.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-full">
-                <Zap className="h-4 w-4" />
-                Fast streaming responses
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-full">
-                <Shield className="h-4 w-4" />
-                Production-focused
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-full">
-                <Code className="h-4 w-4" />
-                Ready-to-use code
-              </span>
-            </div>
+    <div className="h-screen bg-background flex flex-col">
+      {/* Compact Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="font-semibold text-lg">Stunning Builder</span>
+          </div>
+          <div className="hidden md:flex items-center gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><Zap className="h-3 w-3" />Streaming</span>
+            <span className="flex items-center gap-1"><Shield className="h-3 w-3" />Production-ready</span>
+            <span className="flex items-center gap-1"><Code className="h-3 w-3" />Code output</span>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Main Builder */}
-      <main className="container mx-auto px-4 py-10 lg:py-20">
-        <div className="grid lg:grid-cols-12 gap-8">
-          {/* Input Panel */}
-          <div className="lg:col-span-5">
-            <Card className="sticky top-24 h-fit">
-              <CardContent className="p-6 space-y-6">
+      {/* Main Layout - Full Height */}
+      <main className="flex-1 overflow-hidden container mx-auto px-4 py-4">
+        <div className="h-full grid lg:grid-cols-[1fr_1.2fr] gap-4">
+          {/* Left Panel - Input */}
+          <div className="flex flex-col h-full min-h-0">
+            <Card className="flex-1 flex flex-col h-full">
+              <CardHeader className="pb-3 flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">Build Your Spec</CardTitle>
+                  <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'build' | 'result')} className="ml-auto">
+                    <TabsList className="grid w-auto grid-cols-2 bg-muted p-1">
+                      <TabsTrigger value="build" className="text-xs py-1.5">Input</TabsTrigger>
+                      <TabsTrigger value="result" className="text-xs py-1.5">Result</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto p-0 pt-4 space-y-4">
                 <PromptInput
                   onSubmit={handleGenerate}
                   disabled={isLoading}
@@ -126,21 +119,36 @@ export default function Home() {
             </Card>
           </div>
 
-          {/* Response Panel */}
-          <div className="lg:col-span-7">
-            <ResponseDisplay
-              content={response}
-              isLoading={isLoading}
-              error={error || undefined}
-            />
+          {/* Right Panel - Result */}
+          <div className="h-full min-h-0">
+            <Card className="h-full flex flex-col">
+              <CardHeader className="pb-3 flex-shrink-0">
+                <CardTitle className="text-base">
+                  {isLoading ? (
+                    'Generating...'
+                  ) : response ? (
+                    'Generated Spec'
+                  ) : (
+                    'Output'
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto p-0 pt-4">
+                <ResponseDisplay
+                  content={response}
+                  isLoading={isLoading}
+                  error={error || undefined}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Built for Stunning Candidate Task — Next.js 15 + TypeScript + Groq (Llama 3.1 70B)</p>
+      {/* Minimal Footer */}
+      <footer className="border-t py-2 bg-card/50 backdrop-blur-sm flex-shrink-0">
+        <div className="container mx-auto px-4 text-center text-xs text-muted-foreground">
+          Next.js 15 + TypeScript + Groq (Llama 3.1 70B)
         </div>
       </footer>
     </div>

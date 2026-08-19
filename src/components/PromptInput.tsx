@@ -29,39 +29,39 @@ export function PromptInput({ onSubmit, disabled }: PromptInputProps) {
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="space-y-3">
-        <Label htmlFor="prompt" className="text-sm font-medium text-muted-foreground">
+      <div className="space-y-2">
+        <Label htmlFor="prompt" className="text-xs font-medium text-muted-foreground">
           What do you want to build?
         </Label>
         <Textarea
           id="prompt"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your idea... e.g., 'A SaaS dashboard with user authentication, Stripe subscriptions, and Slack notifications for new signups'"
-          rows={4}
-          className="resize-none"
+          placeholder="Describe your idea... e.g., 'A SaaS dashboard with Stripe subscriptions and Slack notifications'"
+          rows={3}
+          className="resize-none h-24"
           disabled={isSubmitting || disabled}
           maxLength={2000}
         />
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">
-            {prompt.length}/2000 characters
+            {prompt.length}/2000
           </span>
           <Button
             type="submit"
             disabled={!prompt.trim() || isSubmitting || disabled}
-            className="gap-2"
-            size="lg"
+            className="gap-1.5 h-9 px-4"
+            size="default"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 Generating...
               </>
             ) : (
               <>
                 Build
-                <Send className="h-4 w-4" />
+                <Send className="h-3.5 w-3.5" />
               </>
             )}
           </Button>

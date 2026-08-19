@@ -45,83 +45,70 @@ export function IntegrationSelector({
     }
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-      // Popover handles closing automatically
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   return (
     <div className="w-full" ref={popoverRef}>
-      <label className="text-sm font-medium text-muted-foreground mb-2 block">
+      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
         Integrations (optional)
       </label>
       <Popover open={false}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-between h-auto min-h-[48px] py-3 text-left"
+            className="w-full justify-between h-9 py-1.5 text-left text-sm"
             disabled={disabled}
           >
             <span className="truncate flex-1">
               {selectedIds.length === 0
                 ? 'Select integrations...'
-                : `${selectedIds.length} integration${selectedIds.length > 1 ? 's' : ''} selected`}
+                : `${selectedIds.length} selected`}
             </span>
-            <ChevronDown className="h-4 w-4 opacity-50 shrink-0 ml-2" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-50 shrink-0 ml-2" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full max-h-96 p-0" sideOffset={5} align="start">
-          <div className="p-2">
-            <div className="flex items-center justify-between px-2 py-2 border-b">
-              <span className="text-sm font-medium">Available Integrations</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSelectAll}
-                className="text-xs h-auto px-2 py-1"
+        <PopoverContent className="w-full max-h-72 p-1.5" sideOffset={4} align="start">
+          <div className="flex items-center justify-between px-1.5 py-1.5 border-b">
+            <span className="text-xs font-medium">Available</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSelectAll}
+              className="text-xs h-6 px-1.5"
+            >
+              {selectedIds.length === integrations.length ? 'Deselect all' : 'Select all'}
+            </Button>
+          </div>
+          <div className="max-h-56 overflow-y-auto">
+            {integrations.map((integration) => (
+              <div
+                key={integration.id}
+                className="flex items-center gap-2 px-1.5 py-1.5 hover:bg-accent rounded cursor-pointer transition-colors"
+                onClick={() => toggleIntegration(integration.id)}
               >
-                {selectedIds.length === integrations.length ? 'Deselect all' : 'Select all'}
-              </Button>
-            </div>
-            <div className="max-h-64 overflow-y-auto">
-              {integrations.map((integration) => (
-                <div
-                  key={integration.id}
-                  className="flex items-center gap-3 px-2 py-2 hover:bg-accent rounded-md cursor-pointer transition-colors"
-                  onClick={() => toggleIntegration(integration.id)}
-                >
-                  <Checkbox
-                    checked={selectedIds.includes(integration.id)}
-                    onCheckedChange={() => toggleIntegration(integration.id)}
-                    disabled={disabled}
-                    className="shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{integration.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {integration.description}
-                    </p>
-                  </div>
+                <Checkbox
+                  checked={selectedIds.includes(integration.id)}
+                  onCheckedChange={() => toggleIntegration(integration.id)}
+                  disabled={disabled}
+                  className="shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{integration.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {integration.description}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </PopoverContent>
       </Popover>
       {selectedIds.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-3" role="status" aria-live="polite">
+        <div className="flex flex-wrap gap-1.5 mt-2" role="status" aria-live="polite">
           {selectedIds.map((id) => {
             const integration = integrations.find((i) => i.id === id);
             return (
               <span
                 key={id}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-primary/10 text-primary rounded-full"
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full"
               >
                 {integration?.name}
                 <button
@@ -133,7 +120,7 @@ export function IntegrationSelector({
                   className="hover:bg-primary/20 rounded-full p-0.5"
                   aria-label={`Remove ${integration?.name}`}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-2.5 w-2.5" />
                 </button>
               </span>
             );
