@@ -2,6 +2,8 @@
 
 A full-stack landing page that takes a user's product idea and selected integrations, then generates a detailed technical specification using GPT-4o.
 
+**Repository:** https://github.com/AhmadAymanA99/stunning-task
+
 ## Features
 
 - **Prompt Input** — Describe what you want to build
@@ -29,7 +31,7 @@ A full-stack landing page that takes a user's product idea and selected integrat
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/AhmadAymanA99/stunning-task.git
 cd stunning-builder
 
 # Install dependencies
